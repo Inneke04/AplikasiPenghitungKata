@@ -1,3 +1,10 @@
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -50,6 +57,11 @@ public class AplikasiPenghitungKata extends javax.swing.JFrame {
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextArea1KeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextArea1);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -66,9 +78,19 @@ public class AplikasiPenghitungKata extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton1.setText("Hitung");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton2.setText("Simpan");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Cari Kata :");
@@ -77,6 +99,11 @@ public class AplikasiPenghitungKata extends javax.swing.JFrame {
 
         jButton3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton3.setText("Cari");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("Jumlah Kata dicari :");
@@ -140,7 +167,7 @@ public class AplikasiPenghitungKata extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jButton3)
                     .addComponent(jLabel7))
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -163,6 +190,65 @@ public class AplikasiPenghitungKata extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+        String kataPencarian = jTextField1.getText();
+        String text = jTextArea1.getText(); 
+        Pattern pola = Pattern.compile("\\b" + kataPencarian + "\\b", Pattern.CASE_INSENSITIVE);
+        
+        Matcher pencocokan = pola.matcher(text);
+
+        int cocok = 0;
+        while (pencocokan.find()) {
+            cocok++;
+        }
+
+        jLabel7.setText("Jumlah Kata dicari : " + cocok + " Kata");
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        hitung();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String text = jTextArea1.getText(); 
+        String counts = jLabel2.getText() + "\n" +
+                        jLabel3.getText() + "\n" +
+                        jLabel4.getText() + "\n" +
+                        jLabel5.getText();
+
+        try (FileWriter writer = new FileWriter("HasilPenghitungKata.txt")) {
+            writer.write("Teks :\n" + text + "\n\nHitung :\n" + counts);
+            JOptionPane.showMessageDialog(this, "Tersimpan di HasilPenghitungKata.txt");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi error ketika menyimpan file!");
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
+        hitung();
+    }//GEN-LAST:event_jTextArea1KeyTyped
+
+       private void hitung() {
+        String text = jTextArea1.getText();
+
+        String[] kata = text.split("\\s+");
+        int jumlahKata = text.isEmpty() ? 0 : kata.length;
+        jLabel2.setText("Jumlah Kata : " + jumlahKata);
+
+        int jumlahKarakter = text.length();
+        jLabel3.setText("Jumlah Karakter : " + jumlahKarakter);
+
+        String[] kalimat = text.split("[.!?]\\s*");
+        int jumlahKalimat = text.isEmpty() ? 0 : kalimat.length;
+        jLabel4.setText("Jumlah Kalimat : " + jumlahKalimat);
+
+        String[] paragraf = text.split("\\n+");
+        int jumlahParagraf = text.isEmpty() ? 0 : paragraf.length;
+        jLabel5.setText("Jumlah Paragraf : " + jumlahParagraf);
+    }
+    
     /**
      * @param args the command line arguments
      */
